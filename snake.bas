@@ -1,48 +1,59 @@
-0 REM POKE 49234,0 : REM full-screen graphics
-0 REM POKE 49235,0 : REM mixed mode
-0 REM color 1 is red, color 6 is blue
-
- 985 rem GET_KEY
- 990 rem input key-press, output (dx, dy) +/- 1
- 995 rem if a non-arrow-key is pressed, output (0, 0)
-1000 let dx = 0
-1010 let dy = 0
-1020 get d$
-1030 let c = asc(d$)
-1040 if c = 11 then dy = -1 : rem up (y-axis grows down)
-1050 if c = 10 then dy = 1 : rem down
-1060 if c = 8 then dx = -1 : rem left
-1070 if c = 21 then dx = 1 : rem right
-1080 return
-
-10 gosub 2000
-20 end
-
-2000 HOME : GR
-2010 color = 1
-2020 x = 20
-2030 y = 10
-2040 plot X,Y*2
-2050 plot X,Y*2+1
-2060 gosub 1000
-2070 x = x + dx
-2080 y = y + dy
-2090 goto 2040
-2100 return : rem unreachable
+0 rem poke 49234,0 : rem' full-screen graphics
+0 rem poke 49235,0 : rem' mixed mode
 
 
+1 gosub 1000 : rem call main()
+2 end
 
 
-10010 REM draw a red square in the center of the screen
-10020 HOME : GR
-10030 COLOR=1
-10033 X = 20
-10036 Y = 12
-10040 PLOT X,Y*2
-10050 PLOT X,Y*2+1
+0 rem 1000 main()
+1000 home : gr
+1010 let x1 = 13
+1020 let y1 = 10
+1030 let x2 = 26
+1040 let y2 = 10
 
-63000 rem test GET_KEY
-63010 HOME : TEXT
-63020 gosub 1000
-63030 print dx,dy
-63040 goto 20
+0 rem' draw snake heads
+1050 color = 1 : rem loop draw
+1060 plot x1,y1*2
+1070 plot x1,y1*2+1
+1080 color = 6
+1090 plot x2,y2*2
+1100 plot x2,y2*2+1
+
+0 rem' get input; possibly update a player's position
+1120 get key$
+1130 let a = asc(key$)
+1140 gosub 2000 : rem call p1_key_dir()
+1150 x1 = x1 + dx
+1160 y1 = y1 + dy
+1170 gosub 3000 : rem call p2_key_dir()
+1180 x2 = x2 + dx
+1190 y2 = y2 + dy
+
+1200 goto 1050 : rem loop end draw
+1210 return : rem' unreachable
+
+
+0 rem 2000 p1_key_dir(a: keycode) -> (dx, dy)
+0 rem' p1 keys are WASD
+0 rem' if `a` is not a p1 key, output (0, 0)
+2000 let dx = 0
+2010 let dy = 0
+2040 if a = 87 then dy = -1 : rem up (y-axis grows down)
+2050 if a = 83 then dy = 1 : rem down
+2060 if a = 65 then dx = -1 : rem left
+2070 if a = 68 then dx = 1 : rem right
+2080 return
+
+
+0 rem 3000 p2_key_dir(a: keycode) -> (dx, dy)
+0 rem' p2 keys are arrow keys, for now
+0 rem' if `a` is not a p2 key, output (0, 0)
+3000 let dx = 0
+3010 let dy = 0
+3040 if a = 11 then dy = -1
+3050 if a = 10 then dy = 1
+3060 if a = 8 then dx = -1
+3070 if a = 21 then dx = 1
+3080 return
