@@ -8,10 +8,10 @@
 
 0 rem 1000 main()
 1000 home : gr
-1010 let x1 = 13
-1020 let y1 = 10
-1030 let x2 = 26
-1040 let y2 = 10
+
+0 rem' initial positions and directions
+1010 let x1=13 : y1=10 : d1=1 : e1=0
+1030 let x2=26 : y2=10 : d2=-1 : e2=0
 
 0 rem' draw snake heads
 1050 color = 1 : rem loop draw
@@ -21,18 +21,28 @@
 1090 plot x2,y2*2
 1100 plot x2,y2*2+1
 
-0 rem' get input; possibly update a player's position
-1120 get key$
-1130 let a = asc(key$)
+0 rem' get input in a loop, waiting for the next 'frame'
+1110 for t = 1 to 100
+1120 let a = 0
+1130 if peek(49152) >= 128 then get key$ : a = asc(key$) : ? a
+0 rem' note that we always run the loop body, even if no key was pressed.
+0 rem' this is so that each tick takes a similar amount of time.
 1140 gosub 2000 : rem call p1_key_dir()
-1150 x1 = x1 + dx
-1160 y1 = y1 + dy
-1170 gosub 3000 : rem call p2_key_dir()
-1180 x2 = x2 + dx
-1190 y2 = y2 + dy
+0 rem' todo guard this direction change to not go backwards
+0 rem' (need another set of vars)
+1150 if not(dx=0 and dy=0) then d1 = dx : e1 = dy
+1160 gosub 3000 : rem call p2_key_dir()
+1170 if not(dx=0 and dy=0) then d2 = dx : e2 = dy
+1180 next t
 
-1200 goto 1050 : rem loop end draw
-1210 return : rem' unreachable
+0 rem' update positions
+1190 x1 = x1 + d1
+1200 y1 = y1 + e1
+1210 x2 = x2 + d2
+1220 y2 = y2 + e2
+
+1230 goto 1050 : rem loop end draw
+1240 return : rem' unreachable
 
 
 0 rem 2000 p1_key_dir(a: keycode) -> (dx, dy)
@@ -40,10 +50,10 @@
 0 rem' if `a` is not a p1 key, output (0, 0)
 2000 let dx = 0
 2010 let dy = 0
-2040 if a = 87 then dy = -1 : rem up (y-axis grows down)
-2050 if a = 83 then dy = 1 : rem down
-2060 if a = 65 then dx = -1 : rem left
-2070 if a = 68 then dx = 1 : rem right
+2040 if a=87 or a=119 then dy = -1 : rem up (y-axis grows down)
+2050 if a=83 or a=115 then dy = 1 : rem down
+2060 if a=65 or a=97 then dx = -1 : rem left
+2070 if a=68 or a=100 then dx = 1 : rem right
 2080 return
 
 
