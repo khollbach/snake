@@ -21,20 +21,28 @@
 1090 plot x2,y2*2
 1100 plot x2,y2*2+1
 
-0 rem' get input in a loop, waiting for the next 'frame'
+0 rem' Get input in a loop, waiting for the next 'frame'.
+0 rem'
+0 rem' These variables hold the players' new directions.
+0 rem' We keep around the old directions, so we can stop players
+0 rem' from accidentally going backwards into themselves.
+1103 let f1=d1 : g1=e1
+1106 let f2=d2 : g2=e2
 1110 for t = 1 to 100
 1120 let a = 0
 1130 if peek(49152) >= 128 then get key$ : a = asc(key$) : ? a
-0 rem' note that we always run the loop body, even if no key was pressed.
-0 rem' this is so that each tick takes a similar amount of time.
+0 rem' Note: we always run the loop body, even if no key was pressed.
+0 rem' This is so that each tick takes a similar amount of time.
+0 rem' todo: maybe there's a better way?
 1140 gosub 2000 : rem call p1_key_dir()
-0 rem' todo guard this direction change to not go backwards
-0 rem' (need another set of vars)
-1150 if not(dx=0 and dy=0) then d1 = dx : e1 = dy
+1150 if not(dx=0 and dy=0) and not(dx=-d1 and dy=-e1) then f1=dx : g1=dy
 1160 gosub 3000 : rem call p2_key_dir()
-1170 if not(dx=0 and dy=0) then d2 = dx : e2 = dy
+1170 if not(dx=0 and dy=0) and not(dx=-d2 and dy=-e2) then f2=dx : g2=dy
 1180 next t
 
+0 rem' update directions
+1183 d1=f1 : e1=g1
+1186 d2=f2 : e2=g2
 0 rem' update positions
 1190 x1 = x1 + d1
 1200 y1 = y1 + e1
