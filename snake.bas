@@ -49,6 +49,10 @@
 1210 x2 = x2 + d2
 1220 y2 = y2 + e2
 
+0 rem' check boundaries
+1223 if not(0<=x1 and x1<40 and 0<=y1 and y1<24) then goto 1000 : rem main()
+1226 if not(0<=x2 and x2<40 and 0<=y2 and y2<24) then goto 1000 : rem main()
+
 1230 goto 1050 : rem loop end draw
 1240 return : rem' unreachable
 
